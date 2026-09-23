@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Bell } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 const navLinks = [
   { label: 'Find Auditions', href: '#casting-calls' },
@@ -13,6 +14,14 @@ const navLinks = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const { user, role, signOut } = useAuth()
+
+  // Mock Notifications
+  const notifications = [
+    { id: 1, title: 'Welcome to CastIndia!', message: 'Complete your profile to get discovered.', time: '1h ago', unread: true },
+  ]
+  const unreadCount = notifications.filter(n => n.unread).length
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -28,6 +37,7 @@ export default function Header() {
   const handleNavClick = (e, href) => {
     e.preventDefault()
     setDrawerOpen(false)
+    setShowNotifications(false)
     if (href === '#') return
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -79,27 +89,76 @@ export default function Header() {
             </nav>
 
             {/* Desktop CTAs */}
-            <div className="hidden lg:flex items-center gap-4">
-              <a
-                href="#"
-                className="no-underline transition-all duration-200 text-[var(--color-text-secondary)] text-[15px] font-medium px-4 py-2.5 hover:text-[var(--color-text-primary)]"
-              >
-                Login
-              </a>
-              <Link
-                to="/talent/dashboard"
-                id="header-create-profile-btn"
-                className="btn-secondary btn-md"
-              >
-                Create Profile
-              </Link>
-              <Link
-                to="/casting-team/dashboard"
-                id="header-start-casting-btn"
-                className="btn-casting btn-md bg-[var(--color-violet)] text-white hover:bg-[#7B73FF] hover:border-[#7B73FF]"
-              >
-                Start Casting
-              </Link>
+            <div className="hidden lg:flex items-center gap-4 relative">
+              {user ? (
+                <>
+                  <button 
+                    className="relative text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors p-2" 
+                    aria-label="Notifications"
+                    onClick={() => setShowNotifications(!showNotifications)}
+                  >
+                    <Bell size={20} />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-[var(--color-bg)]"></span>
+                    )}
+                  </button>
+                  
+                  {showNotifications && (
+                    <div className="absolute top-full right-24 mt-4 w-[320px] bg-[var(--color-surface-1)] backdrop-blur-xl border border-[var(--color-border)] rounded-2xl shadow-xl overflow-hidden z-50">
+                      <div className="p-4 border-b border-[var(--color-border)] flex items-center justify-between bg-[var(--color-surface-2)]">
+                        <h3 className="body-sm font-bold text-[var(--color-text-primary)]">Notifications</h3>
+                        <button className="meta text-[var(--color-gold)] hover:underline">Mark all as read</button>
+                      </div>
+                      <div className="max-h-[300px] overflow-y-auto">
+                        {notifications.map(notif => (
+                          <div key={notif.id} className={`p-4 border-b border-[var(--color-border)] hover:bg-[var(--color-surface-2)] transition-colors cursor-pointer ${notif.unread ? 'bg-[rgba(227,167,47,0.05)]' : ''}`}>
+                            <p className="body-sm font-bold text-[var(--color-text-primary)] mb-1">{notif.title}</p>
+                            <p className="meta text-[var(--color-text-secondary)] mb-2">{notif.message}</p>
+                            <p className="text-xs text-[var(--color-text-muted)]">{notif.time}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Link
+                    to={role === 'admin' ? "/casting-team/dashboard" : "/talent/dashboard"}
+                    className="no-underline transition-all duration-200 text-[var(--color-text-secondary)] text-[15px] font-medium px-4 py-2.5 hover:text-[var(--color-text-primary)]"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={signOut}
+                    className="no-underline transition-all duration-200 text-[var(--color-text-secondary)] text-[15px] font-medium px-4 py-2.5 hover:text-red-400"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/auth"
+                    className="no-underline transition-all duration-200 text-[var(--color-text-secondary)] text-[15px] font-medium px-4 py-2.5 hover:text-[var(--color-text-primary)]"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/auth"
+                    id="header-create-profile-btn"
+                    className="btn-secondary btn-md"
+                  >
+                    Create Profile
+                  </Link>
+
+                  <Link
+                    to="/auth"
+                    id="header-start-casting-btn"
+                    className="btn-casting btn-md bg-[var(--color-violet)] text-white hover:bg-[#7B73FF] hover:border-[#7B73FF]"
+                  >
+                    Start Casting
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -168,28 +227,49 @@ export default function Header() {
 
         {/* Drawer CTAs */}
         <div className="pt-6 px-4 pb-8 border-t border-[var(--color-border)] flex flex-col gap-3">
-          <a
-            href="#"
-            className="text-center no-underline transition-all rounded-xl py-[14px] px-5 text-[15px] font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[rgba(255,255,255,0.05)]"
-          >
-            Login
-          </a>
-          <Link
-            to="/talent/dashboard"
-            onClick={() => setDrawerOpen(false)}
-            id="mobile-create-profile-btn"
-            className="text-center no-underline transition-all rounded-xl py-[15px] px-5 text-[15px] font-semibold bg-[var(--color-gold-muted)] border-[1.5px] border-[var(--color-gold-border)] text-[var(--color-gold)] hover:bg-[var(--color-gold)] hover:text-[#0A0A0F]"
-          >
-            Create Talent Profile
-          </Link>
-          <Link
-            to="/casting-team/dashboard"
-            onClick={() => setDrawerOpen(false)}
-            id="mobile-start-casting-btn"
-            className="text-center no-underline transition-all rounded-xl py-[15px] px-5 text-[15px] font-semibold bg-[var(--color-violet)] text-white hover:bg-[#7B73FF]"
-          >
-            Start Casting
-          </Link>
+          {user ? (
+            <>
+              <Link
+                to={role === 'admin' ? "/casting-team/dashboard" : "/talent/dashboard"}
+                onClick={() => setDrawerOpen(false)}
+                className="text-center no-underline transition-all rounded-xl py-[15px] px-5 text-[15px] font-semibold bg-[var(--color-violet)] text-white hover:bg-[#7B73FF]"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={() => { signOut(); setDrawerOpen(false); }}
+                className="text-center no-underline transition-all rounded-xl py-[14px] px-5 text-[15px] font-medium text-red-400 hover:bg-red-500/10"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/auth"
+                onClick={() => setDrawerOpen(false)}
+                className="text-center no-underline transition-all rounded-xl py-[14px] px-5 text-[15px] font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[rgba(255,255,255,0.05)]"
+              >
+                Login
+              </Link>
+              <Link
+                to="/auth"
+                onClick={() => setDrawerOpen(false)}
+                id="mobile-create-profile-btn"
+                className="text-center no-underline transition-all rounded-xl py-[15px] px-5 text-[15px] font-semibold bg-[var(--color-gold-muted)] border-[1.5px] border-[var(--color-gold-border)] text-[var(--color-gold)] hover:bg-[var(--color-gold)] hover:text-[#0A0A0F]"
+              >
+                Create Talent Profile
+              </Link>
+              <Link
+                to="/auth"
+                onClick={() => setDrawerOpen(false)}
+                id="mobile-start-casting-btn"
+                className="text-center no-underline transition-all rounded-xl py-[15px] px-5 text-[15px] font-semibold bg-[var(--color-violet)] text-white hover:bg-[#7B73FF]"
+              >
+                Start Casting
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>

@@ -6,7 +6,7 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative flex flex-col justify-center overflow-hidden min-h-[100vh]"
+      className="relative flex flex-col justify-start overflow-hidden min-h-[100vh]"
       aria-label="Hero section"
     >
       {/* Background & Cinematic Lighting */}
@@ -29,7 +29,7 @@ export default function HeroSection() {
 
       {/* Content */}
       <div
-        className="container-xl relative z-10 pt-[140px] pb-24 md:pt-[180px] md:pb-[120px]"
+        className="container-xl relative z-10 pt-48 pb-24 md:pt-56 md:pb-32"
       >
         <div className="max-w-[760px]">
 

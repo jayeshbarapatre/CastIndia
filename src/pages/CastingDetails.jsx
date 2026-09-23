@@ -1,36 +1,60 @@
+import { useState, useEffect } from 'react'
 import { AlertCircle, FileText, Clapperboard, Briefcase, Share2, Bookmark } from 'lucide-react'
-import { Link } from 'react-router-dom'
-
-// Mock Data (matches CastingSearch)
-const castingData = {
-  id: 'cc-1',
-  projectName: 'Andhera',
-  projectType: 'Web Series',
-  platform: 'OTT (Major Platform)',
-  roleName: 'Lead Male — Detective',
-  ageRange: '28–38',
-  gender: 'Male',
-  location: 'Mumbai (Shoot location)',
-  language: 'Hindi',
-  auditionType: 'Self Tape',
-  deadline: 'Oct 5, 2026',
-  status: 'Applications Open',
-  verified: true,
-  urgent: false,
-  description: 'Seeking a rugged, intense male lead for a gritty crime thriller web series. The character is a suspended detective who works outside the system to solve cold cases. Requires strong dramatic performance and ability to perform light action sequences.',
-  requirements: [
-    'Must be fluent in Hindi with a neutral accent',
-    'Prior experience in web series or feature films preferred',
-    'Athletic build, willing to undergo basic action training',
-    'Available for a 45-day continuous schedule starting Nov 2026'
-  ],
-  productionDetails: 'Produced by Blue Sky Entertainment. Directed by Vikram Singh. 8-episode series.',
-  auditionInstructions: 'Please submit a 2-minute dramatic monologue in Hindi (self-tape). Ensure good lighting and clear audio. Slate your name, age, height, and current city before the performance.'
-}
+import { Link, useParams } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
 export default function CastingDetails() {
-  // In a real app, fetch data based on ID. Using mock data here.
-  const call = castingData
+  const { id } = useParams()
+  const [call, setCall] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchCastingDetails()
+  }, [id])
+
+  const fetchCastingDetails = async () => {
+    const { data, error } = await supabase
+      .from('casting_calls')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      console.error('Error fetching casting details:', error)
+    } else if (data) {
+      const primaryRole = (data.roles && data.roles.length > 0) ? data.roles[0] : {}
+      
+      setCall({
+        id: data.id,
+        projectName: data.project_name,
+        projectType: data.project_type,
+        platform: data.platform || 'Any Platform',
+        roleName: primaryRole.roleName || 'Unspecified Role',
+        ageRange: primaryRole.ageRange || 'Any',
+        gender: primaryRole.gender || 'Any',
+        location: 'Anywhere',
+        language: primaryRole.language || 'Any',
+        auditionType: primaryRole.auditionType || 'Self Tape',
+        deadline: 'Open',
+        status: 'Applications Open',
+        verified: true,
+        urgent: false,
+        description: data.description || 'No description provided.',
+        requirements: ['Must match age and gender specifications', 'Professional attitude required'],
+        productionDetails: `Production for ${data.project_type}`,
+        auditionInstructions: 'Please follow the audition type instructions carefully.'
+      })
+    }
+    setLoading(false)
+  }
+
+  if (loading) {
+    return <div className="max-w-[1000px] mx-auto w-full px-4 pt-8 text-center"><p className="body-large text-[var(--color-text-secondary)]">Loading casting details...</p></div>
+  }
+
+  if (!call) {
+    return <div className="max-w-[1000px] mx-auto w-full px-4 pt-8 text-center"><p className="body-large text-[var(--color-text-secondary)]">Casting call not found.</p></div>
+  }
 
   return (
     <div className="max-w-[1000px] mx-auto w-full px-4 pt-8 pb-32 md:py-12">

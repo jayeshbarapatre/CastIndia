@@ -1,14 +1,64 @@
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ChevronRight, Users, Plus, AlertCircle } from 'lucide-react'
 import EmptyState from '../components/EmptyState'
-
-const activeProjects = [
-  { id: 'cc-1', title: 'Andhera', type: 'Web Series', roles: 3, applicants: 142, newApplicants: 12 },
-  { id: 'cc-2', title: 'Project Ananya', type: 'Feature Film', roles: 1, applicants: 85, newApplicants: 0 },
-]
+import { supabase } from '../lib/supabase'
 
 export default function CastingDashboard() {
   const navigate = useNavigate()
+  const [activeProjects, setActiveProjects] = useState([])
+  const [pendingApplications, setPendingApplications] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    // Fetch projects
+    const { data: projectsData, error: projectsError } = await supabase
+      .from('casting_calls')
+      .select('*, applications(id)')
+      .order('created_at', { ascending: false })
+      
+    if (projectsError) {
+      console.error('Error fetching projects:', projectsError)
+    } else {
+      const formatted = projectsData.map(project => ({
+        id: project.id,
+        title: project.project_name,
+        type: project.project_type,
+        roles: project.roles ? project.roles.length : 0,
+        applicants: project.applications ? project.applications.length : 0,
+        newApplicants: 0
+      }))
+      setActiveProjects(formatted)
+    }
+
+    // Fetch pending applications
+    const { data: pendingData } = await supabase
+      .from('applications')
+      .select('id, candidate_name, role_name, casting_calls(project_name)')
+      .eq('status', 'underReview')
+      .order('created_at', { ascending: false })
+    
+    if (pendingData) {
+      setPendingApplications(pendingData)
+    }
+
+    setLoading(false)
+  }
+
+  const handleShortlist = async (appId) => {
+    const { error } = await supabase
+      .from('applications')
+      .update({ status: 'shortlisted' })
+      .eq('id', appId)
+      
+    if (!error) {
+      setPendingApplications(prev => prev.filter(app => app.id !== appId))
+    }
+  }
 
   return (
     <div className="max-w-[1200px] mx-auto w-full px-4 py-8 md:py-12">
@@ -26,10 +76,10 @@ export default function CastingDashboard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Main Column - Projects */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6">
           
           <section>
             <div className="flex items-center justify-between mb-6">
@@ -78,20 +128,30 @@ export default function CastingDashboard() {
               <AlertCircle size={20} />
               Review Pending
             </h2>
-            <div className="bg-[var(--color-bg)] rounded-xl p-4 border border-[var(--color-border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <p className="body-sm font-bold text-[var(--color-text-primary)] mb-1">12 New Applications</p>
-                <p className="meta text-[var(--color-text-secondary)]">Lead Male — Detective (Andhera)</p>
-              </div>
-              <button className="btn-primary !bg-[var(--color-surface-2)] !border-[var(--color-border)] !text-[var(--color-text-primary)] hover:!border-[var(--color-violet-border)] hover:!text-[var(--color-violet-light)] !py-2 !px-4 !h-auto !text-sm whitespace-nowrap">
-                Review Now
-              </button>
+            
+            <div className="space-y-4">
+              {pendingApplications.length > 0 ? pendingApplications.map(app => (
+                <div key={app.id} className="bg-[var(--color-bg)] rounded-xl p-4 border border-[var(--color-border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="body-sm font-bold text-[var(--color-text-primary)] mb-1">{app.candidate_name}</p>
+                    <p className="meta text-[var(--color-text-secondary)]">{app.role_name} ({app.casting_calls?.project_name})</p>
+                  </div>
+                  <button 
+                    onClick={() => handleShortlist(app.id)}
+                    className="btn-primary !bg-[var(--color-surface-2)] !border-[var(--color-border)] !text-[var(--color-text-primary)] hover:!border-[var(--color-violet-border)] hover:!text-[var(--color-violet-light)] !py-2 !px-4 !h-auto !text-sm whitespace-nowrap"
+                  >
+                    Shortlist
+                  </button>
+                </div>
+              )) : (
+                <p className="body-sm text-[var(--color-text-secondary)] p-2">No pending applications to review.</p>
+              )}
             </div>
           </section>
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           
           <section className="glass-panel card-pad-lg rounded-[24px]">
             <h2 className="h3-card text-[var(--color-text-primary)] mb-6 flex items-center gap-2">

@@ -1,70 +1,73 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Search, Filter, X } from 'lucide-react'
 import CastingCard from '../components/CastingCard'
 import EmptyState from '../components/EmptyState'
-
-// Mock Data
-const allCastingCalls = [
-  {
-    id: 'cc-1',
-    projectName: 'Andhera',
-    projectType: 'Web Series',
-    platform: 'OTT',
-    roleName: 'Lead Male — Detective',
-    ageRange: '28–38',
-    gender: 'Male',
-    location: 'Mumbai',
-    language: 'Hindi',
-    auditionType: 'Self Tape',
-    deadline: 'Oct 5, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: false,
-  },
-  {
-    id: 'cc-2',
-    projectName: 'Project Ananya',
-    projectType: 'Feature Film',
-    platform: 'Theatrical',
-    roleName: 'Supporting Female',
-    ageRange: '22–30',
-    gender: 'Female',
-    location: 'Hyderabad',
-    language: 'Telugu',
-    auditionType: 'In-Person',
-    deadline: 'Oct 10, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: true,
-  },
-  {
-    id: 'cc-3',
-    projectName: 'Chai & Co.',
-    projectType: 'Advertisement',
-    platform: 'TV + Digital',
-    roleName: 'Brand Ambassador',
-    ageRange: '25–35',
-    gender: 'Any',
-    location: 'Delhi NCR',
-    language: 'Hindi • English',
-    auditionType: 'Self Tape',
-    deadline: 'Oct 15, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: false,
-  }
-]
+import { supabase } from '../lib/supabase'
 
 export default function CastingSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFilters, setSelectedFilters] = useState([])
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [allCastingCalls, setAllCastingCalls] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Filter logic (mock)
-  const filteredCalls = allCastingCalls.filter(call => 
-    call.projectName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    call.roleName.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  useEffect(() => {
+    fetchCastingCalls()
+  }, [])
+
+  const fetchCastingCalls = async () => {
+    const { data, error } = await supabase
+      .from('casting_calls')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching casting calls:', error)
+    } else {
+      // Map Supabase data to the format expected by CastingCard
+      const formatted = data.map(call => {
+        const primaryRole = (call.roles && call.roles.length > 0) ? call.roles[0] : {}
+        return {
+          id: call.id,
+          projectName: call.project_name,
+          projectType: call.project_type,
+          platform: call.platform || 'Any Platform',
+          roleName: primaryRole.roleName || 'Unspecified Role',
+          ageRange: primaryRole.ageRange || 'Any',
+          gender: primaryRole.gender || 'Any',
+          location: 'Anywhere', // Location not captured in form, defaulting
+          language: primaryRole.language || 'Any',
+          auditionType: primaryRole.auditionType || 'Self Tape',
+          deadline: 'Open', 
+          status: 'Applications Open',
+          verified: true,
+          urgent: false,
+        }
+      })
+      setAllCastingCalls(formatted)
+    }
+    setLoading(false)
+  }
+
+  const projectTypeFilters = ['Feature Film', 'Web Series', 'Advertisement', 'Music Video', 'TV Serial']
+  const locationFilters = ['Mumbai', 'Delhi NCR', 'Hyderabad', 'Bengaluru', 'Chennai']
+
+  const filteredCalls = allCastingCalls.filter(call => {
+    // 1. Text Search
+    const matchesSearch = 
+      (call.projectName || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (call.roleName || '').toLowerCase().includes(searchTerm.toLowerCase())
+
+    // 2. Project Type Filter
+    const selectedProjectTypes = selectedFilters.filter(f => projectTypeFilters.includes(f))
+    const matchesProjectType = selectedProjectTypes.length === 0 || selectedProjectTypes.includes(call.projectType)
+
+    // 3. Location Filter (mocking location match if not present)
+    const selectedLocations = selectedFilters.filter(f => locationFilters.includes(f))
+    const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(call.location) || selectedLocations.some(loc => (call.projectName || '').includes(loc))
+
+    return matchesSearch && matchesProjectType && matchesLocation
+  })
 
   const toggleFilter = (filter) => {
     setSelectedFilters(prev => 

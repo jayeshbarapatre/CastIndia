@@ -1,78 +1,102 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Search, Filter, X } from 'lucide-react'
 import TalentCard from '../components/TalentCard'
 import EmptyState from '../components/EmptyState'
+import { supabase } from '../lib/supabase'
 
 import talent1 from '../assets/images/talent_1.jpg'
 import talent2 from '../assets/images/talent_2.jpg'
 import talent3 from '../assets/images/talent_3.jpg'
 
-// Mock Data
-const allTalent = [
-  {
-    id: 't1',
-    name: 'Rahul Mehta',
-    image: talent1,
-    category: 'Actor',
-    city: 'Mumbai',
-    languages: ['Hindi', 'English', 'Marathi'],
-    skills: ['Drama', 'Theatre', 'Action'],
-    verified: true,
-    experience: '6 years',
-    gradientClass: null,
-    initials: null,
-  },
-  {
-    id: 't2',
-    name: 'Priya Sharma',
-    image: talent2,
-    category: 'Actress',
-    city: 'Delhi',
-    languages: ['Hindi', 'English', 'Punjabi'],
-    skills: ['Comedy', 'Drama', 'OTT'],
-    verified: true,
-    experience: '4 years',
-    gradientClass: null,
-    initials: null,
-  },
-  {
-    id: 't3',
-    name: 'Ananya Krishnan',
-    image: talent3,
-    category: 'Model',
-    city: 'Bengaluru',
-    languages: ['Kannada', 'English', 'Hindi'],
-    skills: ['Runway', 'Editorial', 'Commercial'],
-    verified: true,
-    experience: '5 years',
-    gradientClass: null,
-    initials: null,
-  },
-  {
-    id: 't4',
-    name: 'Arjun Nair',
-    image: null,
-    category: 'Singer',
-    city: 'Chennai',
-    languages: ['Tamil', 'Hindi', 'English'],
-    skills: ['Playback', 'Live', 'Carnatic'],
-    verified: true,
-    experience: '8 years',
-    gradientClass: 'bg-[linear-gradient(135deg,rgba(201,168,76,0.15),rgba(108,99,255,0.2))]',
-    initials: 'AN',
-  }
-]
-
 export default function TalentSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFilters, setSelectedFilters] = useState([])
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [allTalent, setAllTalent] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Filter logic (mock)
-  const filteredTalent = allTalent.filter(talent => 
-    talent.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    talent.category.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  useEffect(() => {
+    fetchTalent()
+  }, [])
+
+  const fetchTalent = async () => {
+    const { data, error } = await supabase
+      .from('talent_profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching talent:', error)
+    } else {
+      if (data.length === 0) {
+        // Seed some initial data if empty for demonstration
+        seedTalent()
+      } else {
+        const formatted = data.map(t => ({
+          id: t.id,
+          name: t.full_name,
+          image: talent1, // Mock image
+          category: t.role_title || 'Actor',
+          city: t.location || 'Mumbai',
+          languages: t.primary_language ? [t.primary_language] : ['Hindi', 'English'],
+          skills: t.skills || ['Drama'],
+          verified: t.verified,
+          experience: t.experience_level || 'Beginner',
+          gradientClass: null,
+          initials: t.full_name.substring(0, 2).toUpperCase(),
+        }))
+        setAllTalent(formatted)
+      }
+    }
+    setLoading(false)
+  }
+
+  const seedTalent = async () => {
+    const mockProfiles = [
+      {
+        user_id: 'user_123',
+        full_name: 'Rahul Mehta',
+        role_title: 'Actor',
+        location: 'Mumbai',
+        primary_language: 'Hindi',
+        skills: ['Drama', 'Theatre', 'Action'],
+        verified: true,
+        experience_level: '6 years'
+      },
+      {
+        user_id: 'user_456',
+        full_name: 'Priya Sharma',
+        role_title: 'Actress',
+        location: 'Delhi',
+        primary_language: 'English',
+        skills: ['Comedy', 'Drama', 'OTT'],
+        verified: true,
+        experience_level: '4 years'
+      }
+    ]
+    await supabase.from('talent_profiles').insert(mockProfiles)
+    fetchTalent() // Refetch after seed
+  }
+
+  const professionFilters = ['Actor', 'Actress', 'Model', 'Singer', 'Dancer']
+  const locationFilters = ['Mumbai', 'Delhi NCR', 'Hyderabad', 'Bengaluru', 'Chennai']
+
+  const filteredTalent = allTalent.filter(talent => {
+    // 1. Text Search
+    const matchesSearch = 
+      (talent.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (talent.category || '').toLowerCase().includes(searchTerm.toLowerCase())
+
+    // 2. Profession Filter (category/role_title)
+    const selectedProfessions = selectedFilters.filter(f => professionFilters.includes(f))
+    const matchesProfession = selectedProfessions.length === 0 || selectedProfessions.some(prof => (talent.category || '').toLowerCase().includes(prof.toLowerCase()))
+
+    // 3. Location Filter
+    const selectedLocations = selectedFilters.filter(f => locationFilters.includes(f))
+    const matchesLocation = selectedLocations.length === 0 || selectedLocations.some(loc => (talent.city || '').toLowerCase().includes(loc.toLowerCase()))
+
+    return matchesSearch && matchesProfession && matchesLocation
+  })
 
   const toggleFilter = (filter) => {
     setSelectedFilters(prev => 

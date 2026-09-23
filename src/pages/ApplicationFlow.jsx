@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Upload, ChevronRight, ChevronLeft, CheckCircle2, AlertCircle } from 'lucide-react'
 import ProgressStepper from '../components/ProgressStepper'
+import { supabase } from '../lib/supabase'
 
 const steps = [
   { label: 'Profile' },
@@ -11,15 +12,54 @@ const steps = [
 ]
 
 export default function ApplicationFlow() {
+  const { id } = useParams()
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [castingCall, setCastingCall] = useState(null)
   const navigate = useNavigate()
 
-  const handleNext = () => {
+  useEffect(() => {
+    fetchCastingCall()
+  }, [id])
+
+  const fetchCastingCall = async () => {
+    const { data, error } = await supabase
+      .from('casting_calls')
+      .select('*')
+      .eq('id', id)
+      .single()
+      
+    if (data) {
+      setCastingCall(data)
+    }
+  }
+
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1)
     } else {
-      setIsSubmitted(true)
+      // Submit Application
+      setIsLoading(true)
+      const primaryRole = (castingCall && castingCall.roles && castingCall.roles.length > 0) ? castingCall.roles[0].roleName : 'Unspecified Role'
+      
+      const { error } = await supabase
+        .from('applications')
+        .insert([
+          {
+            casting_id: id,
+            role_name: primaryRole,
+            candidate_name: 'Rahul Sharma', // Mock user
+            candidate_id: 'user_123'
+          }
+        ])
+
+      setIsLoading(false)
+      if (error) {
+        alert("Error submitting application: " + error.message)
+      } else {
+        setIsSubmitted(true)
+      }
     }
   }
 
@@ -32,6 +72,8 @@ export default function ApplicationFlow() {
   }
 
   if (isSubmitted) {
+    const roleName = (castingCall && castingCall.roles && castingCall.roles.length > 0) ? castingCall.roles[0].roleName : 'the role'
+    
     return (
       <div className="max-w-[600px] mx-auto w-full px-4 py-16 text-center">
         <div className="w-24 h-24 rounded-full bg-[var(--color-verified-muted)] flex items-center justify-center mx-auto mb-8 border border-[var(--color-verified)]/20">
@@ -39,7 +81,7 @@ export default function ApplicationFlow() {
         </div>
         <h1 className="h2-section text-[var(--color-text-primary)] mb-4">Application Submitted!</h1>
         <p className="body-large text-[var(--color-text-secondary)] mb-10">
-          Your application for <strong className="text-[var(--color-text-primary)]">Lead Male — Detective</strong> has been successfully sent to the casting team.
+          Your application for <strong className="text-[var(--color-text-primary)]">{roleName}</strong> has been successfully sent to the casting team.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/talent/applications" className="btn-primary flex justify-center !px-8">
@@ -53,10 +95,13 @@ export default function ApplicationFlow() {
     )
   }
 
+  const projectName = castingCall ? castingCall.project_name : 'Loading...'
+  const roleName = (castingCall && castingCall.roles && castingCall.roles.length > 0) ? castingCall.roles[0].roleName : 'Loading...'
+
   return (
     <div className="max-w-[800px] mx-auto w-full px-4 py-8 md:py-12">
       <div className="mb-10">
-        <h1 className="h3-card text-[var(--color-text-primary)] mb-8 text-center">Apply: Lead Male — Detective</h1>
+        <h1 className="h3-card text-[var(--color-text-primary)] mb-8 text-center">Apply: {roleName}</h1>
         <div className="max-w-[500px] mx-auto">
           <ProgressStepper steps={steps} currentStep={currentStep} />
         </div>

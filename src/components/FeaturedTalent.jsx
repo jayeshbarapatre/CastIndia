@@ -1,94 +1,46 @@
+import { useState, useEffect } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import talent1 from '../assets/images/talent_1.jpg'
-import talent2 from '../assets/images/talent_2.jpg'
-import talent3 from '../assets/images/talent_3.jpg'
 import TalentCard from './TalentCard'
-
-// Mock Data
-const talentProfiles = [
-  {
-    id: 't1',
-    name: 'Rahul Mehta',
-    image: talent1,
-    category: 'Actor',
-    city: 'Mumbai',
-    languages: ['Hindi', 'English', 'Marathi'],
-    skills: ['Drama', 'Theatre', 'Action'],
-    verified: true,
-    experience: '6 years',
-    gradientClass: null,
-    initials: null,
-  },
-  {
-    id: 't2',
-    name: 'Priya Sharma',
-    image: talent2,
-    category: 'Actress',
-    city: 'Delhi',
-    languages: ['Hindi', 'English', 'Punjabi'],
-    skills: ['Comedy', 'Drama', 'OTT'],
-    verified: true,
-    experience: '4 years',
-    gradientClass: null,
-    initials: null,
-  },
-  {
-    id: 't3',
-    name: 'Ananya Krishnan',
-    image: talent3,
-    category: 'Model',
-    city: 'Bengaluru',
-    languages: ['Kannada', 'English', 'Hindi'],
-    skills: ['Runway', 'Editorial', 'Commercial'],
-    verified: true,
-    experience: '5 years',
-    gradientClass: null,
-    initials: null,
-  },
-  {
-    id: 't4',
-    name: 'Arjun Nair',
-    image: null,
-    category: 'Singer',
-    city: 'Chennai',
-    languages: ['Tamil', 'Hindi', 'English'],
-    skills: ['Playback', 'Live', 'Carnatic'],
-    verified: true,
-    experience: '8 years',
-    gradientClass: 'bg-[linear-gradient(135deg,rgba(201,168,76,0.15),rgba(108,99,255,0.2))]',
-    initials: 'AN',
-  },
-  {
-    id: 't5',
-    name: 'Meera Pillai',
-    image: null,
-    category: 'Dancer',
-    city: 'Hyderabad',
-    languages: ['Telugu', 'Hindi', 'English'],
-    skills: ['Bharatanatyam', 'Contemporary', 'Bollywood'],
-    verified: false,
-    experience: '7 years',
-    gradientClass: 'bg-[linear-gradient(135deg,rgba(108,99,255,0.15),rgba(46,204,113,0.15))]',
-    initials: 'MP',
-  },
-  {
-    id: 't6',
-    name: 'Kabir Syed',
-    image: null,
-    category: 'Voice Artist',
-    city: 'Mumbai',
-    languages: ['Hindi', 'Urdu', 'English'],
-    skills: ['Dubbing', 'Narration', 'Commercial'],
-    verified: true,
-    experience: '10 years',
-    gradientClass: 'bg-[linear-gradient(135deg,rgba(46,204,113,0.15),rgba(201,168,76,0.15))]',
-    initials: 'KS',
-  },
-]
 
 export default function FeaturedTalent() {
   const revealRef = useScrollReveal()
+  const [talentProfiles, setTalentProfiles] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchFeaturedTalent()
+  }, [])
+
+  const fetchFeaturedTalent = async () => {
+    const { data, error } = await supabase
+      .from('talent_profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(6)
+
+    if (error) {
+      console.error('Error fetching featured talent:', error)
+    } else if (data) {
+      const formatted = data.map(t => ({
+        id: t.id,
+        name: t.full_name,
+        image: talent1, // Mock image
+        category: t.role_title || 'Actor',
+        city: t.location || 'Mumbai',
+        languages: t.primary_language ? [t.primary_language] : ['Hindi', 'English'],
+        skills: t.skills || ['Drama'],
+        verified: t.verified,
+        experience: t.experience_level || 'Beginner',
+        gradientClass: null,
+        initials: t.full_name.substring(0, 2).toUpperCase(),
+      }))
+      setTalentProfiles(formatted)
+    }
+    setLoading(false)
+  }
 
   return (
     <section

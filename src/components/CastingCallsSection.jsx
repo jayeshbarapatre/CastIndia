@@ -1,110 +1,51 @@
-
+import { useState, useEffect } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { Link } from 'react-router-dom'
-
-const castingCalls = [
-  {
-    id: 'cc-1',
-    projectName: 'Andhera',
-    projectType: 'Web Series',
-    platform: 'OTT',
-    roleName: 'Lead Male — Detective',
-    ageRange: '28–38',
-    gender: 'Male',
-    location: 'Mumbai',
-    language: 'Hindi',
-    auditionType: 'Self Tape',
-    deadline: 'Oct 5, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: false,
-  },
-  {
-    id: 'cc-2',
-    projectName: 'Project Ananya',
-    projectType: 'Feature Film',
-    platform: 'Theatrical',
-    roleName: 'Supporting Female',
-    ageRange: '22–30',
-    gender: 'Female',
-    location: 'Hyderabad',
-    language: 'Telugu',
-    auditionType: 'In-Person',
-    deadline: 'Oct 10, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: true,
-  },
-  {
-    id: 'cc-3',
-    projectName: 'Chai & Co.',
-    projectType: 'Advertisement',
-    platform: 'TV + Digital',
-    roleName: 'Brand Ambassador',
-    ageRange: '25–35',
-    gender: 'Any',
-    location: 'Delhi NCR',
-    language: 'Hindi • English',
-    auditionType: 'Self Tape',
-    deadline: 'Oct 15, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: false,
-  },
-  {
-    id: 'cc-4',
-    projectName: 'Rhythm Uncut',
-    projectType: 'Music Video',
-    platform: 'YouTube',
-    roleName: 'Lead Dancer',
-    ageRange: '18–26',
-    gender: 'Female',
-    location: 'Bengaluru',
-    language: 'Kannada • Hindi',
-    auditionType: 'In-Person',
-    deadline: 'Sep 28, 2026',
-    status: 'Applications Open',
-    verified: false,
-    urgent: true,
-  },
-  {
-    id: 'cc-5',
-    projectName: 'Sitara',
-    projectType: 'TV Serial',
-    platform: 'Star Plus',
-    roleName: 'Child Lead — Age 10–14',
-    ageRange: '10–14',
-    gender: 'Female',
-    location: 'Mumbai',
-    language: 'Hindi',
-    auditionType: 'Self Tape',
-    deadline: 'Oct 20, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: false,
-  },
-  {
-    id: 'cc-6',
-    projectName: 'NightOwl Podcast',
-    projectType: 'Digital Content',
-    platform: 'Spotify + YouTube',
-    roleName: 'Voice Host',
-    ageRange: '24–40',
-    gender: 'Any',
-    location: 'Remote',
-    language: 'English',
-    auditionType: 'Audio Submission',
-    deadline: 'Oct 30, 2026',
-    status: 'Applications Open',
-    verified: true,
-    urgent: false,
-  },
-]
-
 import CastingCard from './CastingCard'
+import { supabase } from '../lib/supabase'
 
 export default function CastingCallsSection() {
   const revealRef = useScrollReveal()
+  const [castingCalls, setCastingCalls] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchCastingCalls()
+  }, [])
+
+  const fetchCastingCalls = async () => {
+    const { data, error } = await supabase
+      .from('casting_calls')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(6)
+
+    if (error) {
+      console.error('Error fetching casting calls:', error)
+    } else if (data) {
+      const formatted = data.map(call => {
+        const primaryRole = (call.roles && call.roles.length > 0) ? call.roles[0] : {}
+        return {
+          id: call.id,
+          projectName: call.project_name,
+          projectType: call.project_type,
+          platform: call.platform || 'Any Platform',
+          roleName: primaryRole.roleName || 'Unspecified Role',
+          ageRange: primaryRole.ageRange || 'Any',
+          gender: primaryRole.gender || 'Any',
+          location: 'Anywhere',
+          language: primaryRole.language || 'Any',
+          auditionType: primaryRole.auditionType || 'Self Tape',
+          deadline: 'Open', 
+          status: 'Applications Open',
+          verified: true,
+          urgent: false,
+        }
+      })
+      setCastingCalls(formatted)
+    }
+    setLoading(false)
+  }
 
   return (
     <section

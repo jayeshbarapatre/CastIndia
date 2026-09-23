@@ -1,18 +1,77 @@
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ChevronRight, Bookmark, AlertCircle } from 'lucide-react'
 import StatusBadge from '../components/StatusBadge'
 import EmptyState from '../components/EmptyState'
-
-// Mock Data
-const recentApplications = [
-  { id: '1', role: 'Lead Male — Detective', project: 'Andhera', date: 'Oct 1, 2026', status: 'underReview' },
-  { id: '2', role: 'Brand Ambassador', project: 'Chai & Co.', date: 'Sep 25, 2026', status: 'shortlisted' },
-  { id: '3', role: 'Supporting Male', project: 'Project Ananya', date: 'Sep 10, 2026', status: 'notSelected' },
-]
+import { supabase } from '../lib/supabase'
 
 export default function TalentDashboard() {
-  const profileCompleteness = 85
   const navigate = useNavigate()
+  const [profileCompleteness, setProfileCompleteness] = useState(0)
+  const [recentApplications, setRecentApplications] = useState([])
+  const [savedCastings, setSavedCastings] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    // 1. Fetch Profile Completeness
+    const { data: profile } = await supabase
+      .from('talent_profiles')
+      .select('*')
+      .eq('user_id', 'user_123')
+      .single()
+    
+    if (profile) {
+      let score = 20 // base
+      if (profile.full_name) score += 20
+      if (profile.bio) score += 20
+      if (profile.skills && profile.skills.length > 0) score += 20
+      if (profile.location) score += 20
+      setProfileCompleteness(score)
+    }
+
+    // 2. Fetch Applications
+    const { data: apps } = await supabase
+      .from('applications')
+      .select('id, role_name, created_at, status, casting_calls(project_name)')
+      .eq('candidate_id', 'user_123')
+      .order('created_at', { ascending: false })
+      
+    if (apps) {
+      setRecentApplications(apps.map(app => ({
+        id: app.id,
+        role: app.role_name,
+        project: app.casting_calls?.project_name || 'Unknown',
+        date: new Date(app.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        status: app.status || 'underReview'
+      })))
+    }
+
+    // 3. Fetch Saved Castings
+    const { data: saved } = await supabase
+      .from('saved_castings')
+      .select('id, casting_calls(id, project_name, roles)')
+      .eq('user_id', 'user_123')
+      .order('created_at', { ascending: false })
+      .limit(3)
+      
+    if (saved) {
+      setSavedCastings(saved.map(s => {
+        const primaryRole = (s.casting_calls?.roles && s.casting_calls.roles.length > 0) ? s.casting_calls.roles[0].roleName : 'Role'
+        return {
+          id: s.id,
+          casting_id: s.casting_calls?.id,
+          project: s.casting_calls?.project_name || 'Unknown',
+          role: primaryRole
+        }
+      }))
+    }
+    
+    setLoading(false)
+  }
 
   return (
     <div className="max-w-[1200px] mx-auto w-full px-4 py-8 md:py-12">
@@ -43,10 +102,10 @@ export default function TalentDashboard() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Main Column - Applications */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6">
           
           <section>
             <div className="flex items-center justify-between mb-6">
@@ -99,7 +158,7 @@ export default function TalentDashboard() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           
           <section className="glass-panel card-pad-lg rounded-[24px]">
             <h2 className="h3-card text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
@@ -108,20 +167,17 @@ export default function TalentDashboard() {
             </h2>
             
             <div className="space-y-4">
-              <div className="pb-4 border-b border-[var(--color-border)]">
-                <p className="body-sm font-bold text-[var(--color-text-primary)] mb-1">Lead Dancer</p>
-                <p className="meta text-[var(--color-text-secondary)] mb-2">Rhythm Uncut (Music Video)</p>
-                <Link to="/casting/cc-4" className="meta text-[var(--color-gold)] hover:underline flex items-center gap-1">
-                  View Details <ChevronRight size={12} />
-                </Link>
-              </div>
-              <div>
-                <p className="body-sm font-bold text-[var(--color-text-primary)] mb-1">Voice Host</p>
-                <p className="meta text-[var(--color-text-secondary)] mb-2">NightOwl Podcast</p>
-                <Link to="/casting/cc-6" className="meta text-[var(--color-gold)] hover:underline flex items-center gap-1">
-                  View Details <ChevronRight size={12} />
-                </Link>
-              </div>
+              {savedCastings.length > 0 ? savedCastings.map(saved => (
+                <div key={saved.id} className="pb-4 border-b border-[var(--color-border)] last:border-0 last:pb-0">
+                  <p className="body-sm font-bold text-[var(--color-text-primary)] mb-1">{saved.role}</p>
+                  <p className="meta text-[var(--color-text-secondary)] mb-2">{saved.project}</p>
+                  <Link to={`/casting/${saved.casting_id}`} className="meta text-[var(--color-gold)] hover:underline flex items-center gap-1">
+                    View Details <ChevronRight size={12} />
+                  </Link>
+                </div>
+              )) : (
+                <p className="meta text-[var(--color-text-secondary)]">No saved castings yet.</p>
+              )}
             </div>
             
             <Link to="/talent/saved" className="btn-secondary w-full mt-6 flex justify-center !py-2 !h-auto">

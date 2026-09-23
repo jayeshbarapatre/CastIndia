@@ -29,8 +29,8 @@
   --color-border-hover:    rgba(255, 255, 255, 0.15);
 
   /* ─── Typography ─── */
-  --font-display:          "Cormorant Garamond", Georgia, serif;
-  --font-ui:               "Inter", system-ui, sans-serif;
+  --font-display:          "Space Grotesk", system-ui, sans-serif;
+  --font-ui:               "Space Grotesk", system-ui, sans-serif;
 
   /* ─── Border Radius ─── */
   --radius-sm:             8px;
@@ -56,6 +56,13 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   overflow-x: hidden;
+  color-scheme: dark;
+}
+
+/* Ensure dropdown options inherit dark mode styling */
+select option {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
 }
 
 /* ─── Display Font Utility ─── */
@@ -185,34 +192,34 @@ body {
 
 /* Section padding — major sections */
 .section-pad-lg {
-  padding-top: 160px;
-  padding-bottom: 160px;
+  padding-top: 80px;
+  padding-bottom: 80px;
 }
 /* Section padding — normal sections */
 .section-pad {
-  padding-top: 120px;
-  padding-bottom: 120px;
-}
-/* Section padding — small sections */
-.section-pad-sm {
   padding-top: 64px;
   padding-bottom: 64px;
 }
+/* Section padding — small sections */
+.section-pad-sm {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
 
 @media (max-width: 1024px) {
-  .section-pad-lg   { padding-top: 120px; padding-bottom: 120px; }
-  .section-pad      { padding-top: 96px;  padding-bottom: 96px; }
-  .section-pad-sm   { padding-top: 56px;  padding-bottom: 56px; }
+  .section-pad-lg   { padding-top: 64px; padding-bottom: 64px; }
+  .section-pad      { padding-top: 48px;  padding-bottom: 48px; }
+  .section-pad-sm   { padding-top: 32px;  padding-bottom: 32px; }
 }
 @media (max-width: 768px) {
-  .section-pad-lg   { padding-top: 80px;  padding-bottom: 80px; }
-  .section-pad      { padding-top: 64px;  padding-bottom: 64px; }
-  .section-pad-sm   { padding-top: 48px;  padding-bottom: 48px; }
+  .section-pad-lg   { padding-top: 48px;  padding-bottom: 48px; }
+  .section-pad      { padding-top: 40px;  padding-bottom: 40px; }
+  .section-pad-sm   { padding-top: 24px;  padding-bottom: 24px; }
 }
 @media (max-width: 430px) {
-  .section-pad-lg   { padding-top: 72px;  padding-bottom: 72px; }
-  .section-pad      { padding-top: 56px;  padding-bottom: 56px; }
-  .section-pad-sm   { padding-top: 40px;  padding-bottom: 40px; }
+  .section-pad-lg   { padding-top: 40px;  padding-bottom: 40px; }
+  .section-pad      { padding-top: 32px;  padding-bottom: 32px; }
+  .section-pad-sm   { padding-top: 20px;  padding-bottom: 20px; }
 }
 
 /* ══════════════════════════════════════════════
@@ -351,21 +358,25 @@ body {
 ══════════════════════════════════════════════ */
 .h1-display {
   font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 1.05;
-  font-size: clamp(3.5rem, 6vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+  padding-top: 0.2em; /* Prevents font ascender clipping */
+  overflow: visible;
+  font-size: clamp(2.25rem, 6vw, 5.5rem);
 }
 .h2-section {
   font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 1.1;
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+  padding-top: 0.15em;
+  overflow: visible;
+  font-size: clamp(1.75rem, 4vw, 3.5rem);
 }
 .h3-card {
   font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 1.15;
-  font-size: clamp(1.25rem, 2vw, 2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  font-size: clamp(1.25rem, 3vw, 2rem);
 }
 .body-large {
   font-size: 18px;
@@ -443,24 +454,24 @@ body {
 }
 
 .card-pad {
-  padding: 24px;
-}
-@media (max-width: 768px) {
-  .card-pad { padding: 20px; }
-}
-
-.card-pad-lg {
-  padding: 32px;
-}
-@media (max-width: 768px) {
-  .card-pad-lg { padding: 24px; }
-}
-
-.card-pad-sm {
   padding: 20px;
 }
 @media (max-width: 768px) {
-  .card-pad-sm { padding: 16px; }
+  .card-pad { padding: 16px; }
+}
+
+.card-pad-lg {
+  padding: 24px;
+}
+@media (max-width: 768px) {
+  .card-pad-lg { padding: 20px; }
+}
+
+.card-pad-sm {
+  padding: 16px;
+}
+@media (max-width: 768px) {
+  .card-pad-sm { padding: 12px; }
 }
 
 /* ══════════════════════════════════════════════
@@ -501,16 +512,16 @@ body {
 
 /* Section padding ? tight bottom */
 .section-pad-tight-bottom {
-  padding-top: 112px;
-  padding-bottom: 64px;
+  padding-top: 64px;
+  padding-bottom: 32px;
 }
 @media (max-width: 1024px) {
-  .section-pad-tight-bottom { padding-top: 88px; padding-bottom: 48px; }
+  .section-pad-tight-bottom { padding-top: 48px; padding-bottom: 24px; }
 }
 @media (max-width: 768px) {
-  .section-pad-tight-bottom { padding-top: 72px; padding-bottom: 40px; }
+  .section-pad-tight-bottom { padding-top: 40px; padding-bottom: 20px; }
 }
 @media (max-width: 430px) {
-  .section-pad-tight-bottom { padding-top: 64px; padding-bottom: 32px; }
+  .section-pad-tight-bottom { padding-top: 32px; padding-bottom: 16px; }
 }
 

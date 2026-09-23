@@ -1,35 +1,77 @@
+import { useState, useEffect } from 'react'
 import { MapPin, Globe, CheckCircle, Share2, PlayCircle, Star } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import talent1 from '../assets/images/talent_1.jpg'
 
-// Mock Data
-const talentData = {
-  id: 't1',
-  name: 'Rahul Mehta',
-  image: talent1,
-  category: 'Actor',
-  city: 'Mumbai, Maharashtra',
-  languages: ['Hindi (Native)', 'English (Fluent)', 'Marathi (Conversational)'],
-  skills: ['Drama', 'Theatre', 'Action', 'Voiceover', 'Horse Riding'],
-  verified: true,
-  experience: '6 years',
-  about: "I am a professionally trained actor with 6 years of experience in both theatre and on-screen acting. I have a strong foundation in dramatic arts from NSD and have recently transitioned into web series and feature films. My physical build allows me to comfortably perform action sequences, and I'm deeply committed to character development.",
-  stats: {
-    height: "5' 10\"",
-    weight: "72 kg",
-    eyeColor: "Brown",
-    hairColor: "Black"
-  },
-  showreel: "https://example.com/showreel",
-  recentWork: [
-    { title: "Shadows of the City", role: "Supporting", type: "Web Series", year: "2025" },
-    { title: "Parinda", role: "Lead", type: "Short Film", year: "2024" },
-    { title: "Zomato Delivery", role: "Featured", type: "Advertisement", year: "2024" }
-  ]
-}
-
 export default function TalentProfile() {
-  const talent = talentData
+  const { id } = useParams()
+  const [talent, setTalent] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchTalent()
+  }, [id])
+
+  const fetchTalent = async () => {
+    let queryId = id
+    // If accessing their own profile without ID, use mock user_123
+    if (!queryId) {
+      queryId = 'user_123' // Our mock user ID
+    }
+
+    const { data, error } = await supabase
+      .from('talent_profiles')
+      .select('*')
+      .eq(id ? 'id' : 'user_id', queryId)
+      .single()
+
+    if (error) {
+      console.error('Error fetching talent profile:', error)
+      // Fallback for demonstration if table is empty
+      setTalent({
+        name: 'Rahul Mehta',
+        image: talent1,
+        category: 'Actor',
+        city: 'Mumbai, Maharashtra',
+        languages: ['Hindi (Native)', 'English (Fluent)', 'Marathi (Conversational)'],
+        skills: ['Drama', 'Theatre', 'Action', 'Voiceover', 'Horse Riding'],
+        verified: true,
+        experience: '6 years',
+        about: "I am a professionally trained actor with 6 years of experience in both theatre and on-screen acting. I have a strong foundation in dramatic arts from NSD and have recently transitioned into web series and feature films.",
+        stats: { height: "5' 10\"", weight: "72 kg", eyeColor: "Brown", hairColor: "Black" },
+        showreel: "https://example.com/showreel",
+        recentWork: [
+          { title: "Shadows of the City", role: "Supporting", type: "Web Series", year: "2025" }
+        ]
+      })
+    } else if (data) {
+      setTalent({
+        id: data.id,
+        name: data.full_name,
+        image: talent1, // Mocking image as we don't have storage yet
+        category: data.role_title || 'Talent',
+        city: data.location || 'Unknown',
+        languages: data.primary_language ? [data.primary_language] : ['English'],
+        skills: data.skills || [],
+        verified: data.verified,
+        experience: data.experience_level || 'New',
+        about: data.bio || 'No bio provided.',
+        stats: {
+          height: data.height || '--',
+          weight: '--',
+          eyeColor: '--',
+          hairColor: '--'
+        },
+        showreel: '#',
+        recentWork: []
+      })
+    }
+    setLoading(false)
+  }
+
+  if (loading) return <div className="max-w-[1000px] mx-auto w-full px-4 pt-8 text-center"><p className="body-large text-[var(--color-text-secondary)]">Loading profile...</p></div>
+  if (!talent) return <div className="max-w-[1000px] mx-auto w-full px-4 pt-8 text-center"><p className="body-large text-[var(--color-text-secondary)]">Profile not found.</p></div>
 
   return (
     <div className="max-w-[1000px] mx-auto w-full px-4 pt-8 pb-32 md:py-12">
