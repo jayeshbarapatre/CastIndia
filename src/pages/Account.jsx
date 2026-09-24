@@ -6,7 +6,7 @@ export default function Account() {
   const { user } = useAuth()
 
   return (
-    <div className="container-xl py-12 animate-fade-in">
+    <div className="container-xl pt-12 pb-24 md:pb-32 animate-fade-in">
       <div className="mb-10 text-center">
         <h1 className="h2-section text-[var(--color-text-primary)] mb-3">My Account</h1>
         <p className="body-large text-[var(--color-text-secondary)]">Manage your personal profile and contact information.</p>
