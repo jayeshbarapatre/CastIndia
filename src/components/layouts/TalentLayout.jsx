@@ -160,7 +160,7 @@ function TalentHeader() {
 
 export default function TalentLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-text-primary)]">
+    <div className="min-h-screen flex flex-col text-[var(--color-text-primary)]">
       <TalentHeader />
       <main id="talent-main-content" className="flex-1 flex flex-col">
         <Outlet />

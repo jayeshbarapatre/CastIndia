@@ -61,7 +61,7 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md glass-panel p-8 md:p-10 rounded-[24px] animate-fade-up">
         {/* Premium UI Error/Success Message */}
         {errorMsg && (

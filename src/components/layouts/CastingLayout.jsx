@@ -123,7 +123,7 @@ function CastingHeader() {
 
 export default function CastingLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-text-primary)]">
+    <div className="min-h-screen flex flex-col text-[var(--color-text-primary)]">
       <CastingHeader />
       <main id="casting-main-content" className="flex-1 flex flex-col">
         <Outlet />
