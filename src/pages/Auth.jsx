@@ -62,15 +62,15 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
-      {/* Premium UI Error Toast */}
-      {errorMsg && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[#2A1111]/90 border border-[#FF4C4C]/40 text-[#FF8585] px-6 py-4 rounded-xl flex items-center gap-3 shadow-[0_10px_40px_rgba(255,76,76,0.2)] animate-fade-down backdrop-blur-md max-w-md w-full text-center">
-          <AlertCircle size={20} className="text-[#FF4C4C] shrink-0" />
-          <span className="font-medium text-sm leading-snug">{errorMsg}</span>
-        </div>
-      )}
-
       <div className="w-full max-w-md glass-panel p-8 md:p-10 rounded-[24px] animate-fade-up">
+        {/* Premium UI Error/Success Message */}
+        {errorMsg && (
+          <div className="mb-6 bg-[#2A1111]/90 border border-[#FF4C4C]/40 text-[#FF8585] px-4 py-3 rounded-xl flex items-start gap-3 shadow-[0_10px_40px_rgba(255,76,76,0.1)] animate-fade-down backdrop-blur-md w-full">
+            <AlertCircle size={20} className="text-[#FF4C4C] shrink-0 mt-0.5" />
+            <span className="font-medium text-sm leading-snug">{errorMsg}</span>
+          </div>
+        )}
+
         <div className="text-center mb-8">
           <h1 className="h3-card text-[var(--color-text-primary)] mb-2 font-display">
             {isLogin ? 'Welcome Back' : 'Create an Account'}
