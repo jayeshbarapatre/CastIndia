@@ -1,21 +1,36 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { User, Bell, Menu, X } from 'lucide-react'
+import { User, Bell, Menu, X, LogOut, Settings } from 'lucide-react'
+import { useAuth } from '../../contexts/AuthContext'
 import Footer from '../Footer'
 
 function CastingHeader() {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const location = useLocation()
+  const { signOut, user } = useAuth()
+  const menuRef = useRef(null)
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [drawerOpen])
 
-  // Close drawer on route change
+  // Close menus on route change or click outside
   useEffect(() => {
     setDrawerOpen(false)
+    setShowUserMenu(false)
   }, [location.pathname])
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowUserMenu(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const navLinks = [
     { label: 'Dashboard', path: '/casting-team/dashboard' },
@@ -48,16 +63,41 @@ function CastingHeader() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 relative" ref={menuRef}>
             <Link to="/casting-team/new" className="btn-casting !h-8 !py-0 !text-sm hidden sm:flex">
               Post Casting
             </Link>
             <button className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors" aria-label="Notifications">
               <Bell size={20} />
             </button>
-            <div className="hidden sm:flex w-8 h-8 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-border)] items-center justify-center text-[var(--color-text-secondary)] cursor-pointer hover:border-[var(--color-violet-border)] transition-colors">
+            
+            <div 
+              className="hidden sm:flex w-8 h-8 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-border)] items-center justify-center text-[var(--color-text-secondary)] cursor-pointer hover:border-[var(--color-violet-border)] transition-colors"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
               <User size={16} />
             </div>
+
+            {/* User Dropdown */}
+            {showUserMenu && (
+              <div className="absolute top-full right-0 mt-4 w-48 bg-[var(--color-surface-1)] backdrop-blur-xl border border-[var(--color-border)] rounded-2xl shadow-xl overflow-hidden z-50 animate-fade-down">
+                <div className="p-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]">
+                  <p className="body-sm font-bold text-[var(--color-text-primary)] truncate">{user?.user_metadata?.full_name || 'Casting User'}</p>
+                  <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+                </div>
+                <div className="p-2 flex flex-col gap-1">
+                  <Link to="/casting-team/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors">
+                    <User size={16} /> Account
+                  </Link>
+                  <Link to="/casting-team/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors">
+                    <Settings size={16} /> Settings
+                  </Link>
+                  <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors w-full text-left">
+                    <LogOut size={16} /> Sign out
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button 

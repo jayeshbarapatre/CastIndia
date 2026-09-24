@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { User, Bell, Menu, X, LogOut } from 'lucide-react'
+import { User, Bell, Menu, X, LogOut, Settings } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import Footer from '../Footer'
 
 function TalentHeader() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const location = useLocation()
   const { signOut, user } = useAuth()
+  const menuRef = useRef(null)
 
   // Mock Notifications
   const notifications = [
@@ -22,11 +24,22 @@ function TalentHeader() {
     return () => { document.body.style.overflow = '' }
   }, [drawerOpen])
 
-  // Close drawer on route change
+  // Close menus on route change or click outside
   useEffect(() => {
     setDrawerOpen(false)
     setShowNotifications(false)
+    setShowUserMenu(false)
   }, [location.pathname])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowUserMenu(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const navLinks = [
     { label: 'Dashboard', path: '/talent/dashboard' },
@@ -64,7 +77,10 @@ function TalentHeader() {
             <button 
               className="relative text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors p-1" 
               aria-label="Notifications"
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={() => {
+                setShowNotifications(!showNotifications)
+                setShowUserMenu(false)
+              }}
             >
               <Bell size={20} />
               {unreadCount > 0 && (
@@ -73,7 +89,7 @@ function TalentHeader() {
             </button>
             
             {showNotifications && (
-              <div className="absolute top-full right-12 mt-4 w-[320px] bg-[var(--color-surface-1)] backdrop-blur-xl border border-[var(--color-border)] rounded-2xl shadow-xl overflow-hidden z-50">
+              <div className="absolute top-full right-12 mt-4 w-[320px] bg-[var(--color-surface-1)] backdrop-blur-xl border border-[var(--color-border)] rounded-2xl shadow-xl overflow-hidden z-50 animate-fade-down">
                 <div className="p-4 border-b border-[var(--color-border)] flex items-center justify-between bg-[var(--color-surface-2)]">
                   <h3 className="body-sm font-bold text-[var(--color-text-primary)]">Notifications</h3>
                   <button className="meta text-[var(--color-gold)] hover:underline">Mark all as read</button>
@@ -90,14 +106,38 @@ function TalentHeader() {
               </div>
             )}
 
-            <button 
-              onClick={signOut}
-              className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-secondary)] cursor-pointer hover:border-red-400 hover:text-red-400 transition-colors" 
-              aria-label="Logout"
-              title="Logout"
-            >
-              <LogOut size={16} />
-            </button>
+            <div className="relative" ref={menuRef}>
+              <div 
+                className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-secondary)] cursor-pointer hover:border-[var(--color-gold-border)] hover:text-[var(--color-gold)] transition-colors"
+                onClick={() => {
+                  setShowUserMenu(!showUserMenu)
+                  setShowNotifications(false)
+                }}
+              >
+                <User size={16} />
+              </div>
+
+              {/* User Dropdown */}
+              {showUserMenu && (
+                <div className="absolute top-full right-0 mt-4 w-48 bg-[var(--color-surface-1)] backdrop-blur-xl border border-[var(--color-border)] rounded-2xl shadow-xl overflow-hidden z-50 animate-fade-down">
+                  <div className="p-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]">
+                    <p className="body-sm font-bold text-[var(--color-text-primary)] truncate">{user?.user_metadata?.full_name || 'Talent User'}</p>
+                    <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+                  </div>
+                  <div className="p-2 flex flex-col gap-1">
+                    <Link to="/talent/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors">
+                      <User size={16} /> Account
+                    </Link>
+                    <Link to="/talent/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors">
+                      <Settings size={16} /> Settings
+                    </Link>
+                    <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors w-full text-left">
+                      <LogOut size={16} /> Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             
             {/* Mobile Menu Toggle */}
             <button 
