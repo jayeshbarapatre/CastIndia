@@ -3,10 +3,12 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { User, Bell, Menu, X, LogOut, Settings } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import Footer from '../Footer'
+import ConfirmAlert from '../ConfirmAlert'
 
 function CastingHeader() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
   const location = useLocation()
   const { signOut, user } = useAuth()
   const menuRef = useRef(null)
@@ -86,12 +88,12 @@ function CastingHeader() {
                   <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
                 </div>
                 <div className="p-2 flex flex-col gap-1">
-                  <Link to="/casting-team/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors">
+                  <button onClick={() => { setAlertOpen(true); setShowUserMenu(false); }} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors w-full text-left">
                     <User size={16} /> Account
-                  </Link>
-                  <Link to="/casting-team/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors">
+                  </button>
+                  <button onClick={() => { setAlertOpen(true); setShowUserMenu(false); }} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors w-full text-left">
                     <Settings size={16} /> Settings
-                  </Link>
+                  </button>
                   <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors w-full text-left">
                     <LogOut size={16} /> Sign out
                   </button>
@@ -110,6 +112,16 @@ function CastingHeader() {
           </div>
         </div>
       </header>
+
+      {/* Coming Soon Alert */}
+      <ConfirmAlert 
+        isOpen={alertOpen}
+        title="Coming Soon!"
+        message="The Account and Settings pages are currently under development and will be available in the next beta release."
+        type="info"
+        confirmText="Got it"
+        onConfirm={() => setAlertOpen(false)}
+      />
 
       {/* Mobile Drawer Overlay */}
       {drawerOpen && (
