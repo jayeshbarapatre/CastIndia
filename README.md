@@ -10,6 +10,9 @@ CastIndia is a cinematic, user-centric web application built to streamline the c
 - **For Talent:** A professional hub for actors, models, dancers, and musicians to showcase their portfolio, apply to auditions, and get discovered.
 - **For Casting Directors & Production Houses:** A powerful tool to post casting calls, manage auditions, and discover verified talent across India.
 
+### Platform Preview
+![CastIndia Home Page Preview](public/screenshots/home_page.webp)
+
 ## ✨ Key Features
 
 - **Cinematic UI/UX:** A stunning, dark-mode-first design with amber and violet ambient lighting, glassmorphism elements, and premium typography (Playfair Display).
