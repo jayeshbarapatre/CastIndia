@@ -57,7 +57,7 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-[var(--color-bg)] border-t border-[rgba(255,255,255,0.05)] py-20 md:py-32"
+      className="border-t border-[rgba(255,255,255,0.05)] py-8 md:py-16"
       aria-label="Site footer"
     >
       <div className="container-xl">
