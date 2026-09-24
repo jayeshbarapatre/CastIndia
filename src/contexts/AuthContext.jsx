@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import Loader from '../components/Loader'
 
 const AuthContext = createContext({})
 
@@ -50,7 +51,13 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? (
+        <Loader fullScreen />
+      ) : (
+        <div className="page-transition min-h-screen">
+          {children}
+        </div>
+      )}
     </AuthContext.Provider>
   )
 }
