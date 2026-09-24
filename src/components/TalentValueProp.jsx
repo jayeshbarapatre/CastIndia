@@ -101,14 +101,14 @@ export default function TalentValueProp() {
 
           {/* Right — Journey steps */}
           <div className="relative">
-            {/* Connector line */}
+            {/* Connector line — sits behind the circles (z-0), centered under w-12 icon */}
             <div
-              className="absolute hidden sm:block left-[19px] top-12 bottom-12 w-[1px] bg-[linear-gradient(to_bottom,var(--color-gold-border),transparent)]"
+              className="absolute hidden sm:block left-[23px] top-16 bottom-16 w-[1px] z-0 bg-[linear-gradient(to_bottom,var(--color-gold-border),transparent)]"
             />
 
             <div className="flex flex-col gap-10">
               {journeySteps.map(({ icon: Icon, step, title, desc, active }) => (
-                <div key={step} className="flex gap-6 items-start p-6 cursor-pointer group hover:bg-[var(--color-surface-2)] rounded-[20px] transition-colors duration-200">
+                <div key={step} className="relative z-[1] flex gap-6 items-start p-6 cursor-pointer group hover:bg-[var(--color-surface-2)] rounded-[20px] transition-colors duration-200">
                   {/* Step icon */}
                   <div
                     className={`flex items-center justify-center rounded-xl shrink-0 w-12 h-12 relative z-10 border transition-colors duration-200 ${

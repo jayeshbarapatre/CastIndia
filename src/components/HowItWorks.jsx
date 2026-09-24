@@ -1,76 +1,49 @@
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
-const talentSteps = [
+const steps = [
   {
     num: '01',
-    title: 'Create Your Profile',
-    desc: 'Build a professional casting identity with photos, showreel, credits, skills, languages and physical stats. One profile for your entire career.',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    ),
+    title: 'Create Profile',
+    desc: 'Showcase your skills, add photos and build your profile.',
   },
   {
     num: '02',
-    title: 'Discover Opportunities',
-    desc: 'Browse auditions filtered by category, location, language and project type. Set preferences and receive relevant casting alerts.',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+    ),
+    title: 'Explore Roles',
+    desc: 'Browse latest auditions and casting calls that suit your talent.',
   },
   {
     num: '03',
-    title: 'Apply & Audition',
-    desc: 'Submit applications, record self-tapes and attend in-person auditions — all through one professional casting platform.',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+    ),
+    title: 'Apply',
+    desc: 'Build your profile and stand out to casting teams.',
   },
   {
     num: '04',
-    title: 'Get Shortlisted',
-    desc: 'Receive callbacks and shortlist notifications directly through CastIndia. Track your applications and manage your casting journey.',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    ),
+    title: 'Get Selected',
+    desc: 'If shortlisted, you\'ll be contacted by the production team.',
   },
 ]
-
-const castingSteps = [
-  {
-    num: '01',
-    title: 'Create Your Project',
-    desc: "Publish your production with all relevant details — project type, platform, timeline and production credentials.",
-  },
-  {
-    num: '02',
-    title: 'Define Your Roles',
-    desc: 'Create structured role profiles with specific requirements — age, gender, location, language, skills and audition format.',
-  },
-  {
-    num: '03',
-    title: 'Discover Talent',
-    desc: 'Search India\'s verified talent database with powerful filters. Browse profiles, showreels and credits at a glance.',
-  },
-  {
-    num: '04',
-    title: 'Review & Shortlist',
-    desc: 'Evaluate candidates, build shortlists by role and manage your casting process from discovery to final selection.',
-  },
-]
-
-function StepCard({ step, textClass, hoverBorderClass }) {
-  return (
-    <div
-      className="relative group h-full"
-    >
-      <div
-        className={`glass-panel glass-panel-hover card-pad-lg h-full rounded-[24px] transition-all duration-300 hover:-translate-y-1 ${hoverBorderClass}`}
-      >
-        <div
-          className={`font-display font-light text-[3.5rem] leading-none mb-4 ${textClass}`}
-        >
-          {step.num}
-        </div>
-        <h3
-          className="body-large font-semibold leading-snug text-[var(--color-text-primary)] mb-4"
-        >
-          {step.title}
-        </h3>
-        <p className="body-sm text-[var(--color-text-muted)]">
-          {step.desc}
-        </p>
-      </div>
-    </div>
-  )
-}
 
 export default function HowItWorks() {
   const revealRef = useScrollReveal()
@@ -78,100 +51,116 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="section-pad"
+      className="section-pad relative overflow-hidden"
+      style={{ background: 'var(--color-bg)' }}
       aria-label="How CastIndia works"
     >
-      <div ref={revealRef} className="container-xl relative reveal-up">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <p
-            className="eyebrow !mb-2"
-          >
-            Platform Overview
-          </p>
-          <h2
-            className="h2-section text-[var(--color-text-primary)] mb-4"
-          >
-            How It Works
-          </h2>
+      {/* Ambient glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse at 50% 60%, rgba(227,167,47,0.04) 0%, transparent 65%)'
+      }} />
+
+      <div ref={revealRef} className="container-xl relative z-10 reveal-up">
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '3.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <span style={{
+              fontSize: '0.65rem', letterSpacing: '0.22em', textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.45)', fontWeight: 600, display: 'block', marginBottom: '0.5rem'
+            }}>SIMPLE STEPS</span>
+            <h2 style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontWeight: 700, fontSize: 'clamp(1.8rem, 3vw, 2.6rem)',
+              color: 'var(--color-text-primary)', marginBottom: '0.5rem', lineHeight: 1.1
+            }}>How It Works</h2>
+            <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.45)', maxWidth: '420px' }}>
+              Get started in just a few easy steps and turn your talent into opportunities.
+            </p>
+          </div>
+          {/* Decorative script */}
+          <div style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontStyle: 'italic', fontSize: 'clamp(0.9rem, 1.5vw, 1.15rem)',
+            color: 'rgba(227,167,47,0.55)', lineHeight: 1.6, textAlign: 'right',
+            transform: 'rotate(-3deg)', transformOrigin: 'right top',
+          }}>
+            Your talent<br />matters here
+          </div>
         </div>
 
-        {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-          {/* For Talent */}
-          <div>
-            <div className="flex items-center gap-3 mb-8">
-              <span className="text-2xl">🎭</span>
-              <div>
-                <p className="eyebrow !mb-1">
-                  For Talent
-                </p>
-                <h3
-                  className="h3-card text-[var(--color-text-primary)]"
-                >
-                  Your Casting Journey
-                </h3>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-              {talentSteps.map((step) => (
-                <StepCard 
-                  key={step.num} 
-                  step={step} 
-                  textClass="text-[rgba(227,167,47,0.3)] group-hover:text-[var(--color-gold)] transition-colors duration-300" 
-                  hoverBorderClass="group-hover:border-[var(--color-gold-border)]" 
-                />
-              ))}
-            </div>
-            <div className="mt-10">
-              <button
-                id="how-talent-cta-btn"
-                className="btn-primary btn-md"
+        {/* 4 Steps — horizontal */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0', alignItems: 'start' }}>
+          {steps.map(({ num, icon, title, desc }, i) => (
+            <div key={num} style={{ display: 'flex', alignItems: 'flex-start', gap: '0' }}>
+              {/* Step card */}
+              <div style={{
+                flex: 1,
+                background: 'rgba(255,255,255,0.025)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: '20px',
+                padding: '1.75rem 1.5rem',
+                transition: 'border-color 0.3s, transform 0.3s',
+                cursor: 'default',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(227,167,47,0.35)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; e.currentTarget.style.transform = 'translateY(0)' }}
               >
-                Create Talent Profile
-              </button>
-            </div>
-          </div>
-
-          {/* Vertical divider */}
-          <div
-            className="hidden lg:block absolute left-1/2 -translate-x-1/2 w-[1px] bg-[var(--color-border)] top-40 bottom-0"
-          />
-
-          {/* For Casting */}
-          <div>
-            <div className="flex items-center gap-3 mb-8">
-              <span className="text-2xl">🎬</span>
-              <div>
-                <p className="eyebrow !mb-1 !text-[var(--color-violet-light)]">
-                  For Casting Teams
-                </p>
-                <h3
-                  className="h3-card text-[var(--color-text-primary)]"
-                >
-                  Your Casting Process
-                </h3>
+                {/* Icon circle */}
+                <div style={{
+                  width: '52px', height: '52px', borderRadius: '50%',
+                  background: i === 0 ? 'linear-gradient(135deg, #E3A72F, #C8851A)' : 'rgba(255,255,255,0.06)',
+                  border: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: '1.25rem',
+                  color: i === 0 ? '#000' : 'rgba(255,255,255,0.55)',
+                }}>
+                  {icon}
+                </div>
+                {/* Step number + title */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#E3A72F', fontWeight: 700, letterSpacing: '0.05em' }}>{num}</span>
+                  <h3 style={{
+                    fontSize: '1rem', fontWeight: 700,
+                    color: 'var(--color-text-primary)', lineHeight: 1.2,
+                  }}>{title}</h3>
+                </div>
+                <p style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{desc}</p>
               </div>
+
+              {/* Arrow connector — between steps */}
+              {i < steps.length - 1 && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: '40px', flexShrink: 0, paddingTop: '26px',
+                }}>
+                  <svg width="20" height="16" viewBox="0 0 20 16" fill="none">
+                    <path d="M0 8h17M12 2l6 6-6 6" stroke="rgba(227,167,47,0.5)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-              {castingSteps.map((step) => (
-                <StepCard 
-                  key={step.num} 
-                  step={step} 
-                  textClass="text-[rgba(139,92,246,0.3)] group-hover:text-[var(--color-violet)] transition-colors duration-300" 
-                  hoverBorderClass="group-hover:border-[var(--color-violet-border)]" 
-                />
-              ))}
-            </div>
-            <div className="mt-10">
-              <button
-                id="how-casting-cta-btn"
-                className="btn-casting btn-md"
-              >
-                Start Casting →
-              </button>
-            </div>
-          </div>
+          ))}
+        </div>
+
+        {/* Mobile: vertical steps */}
+        <style>{`
+          @media (max-width: 768px) {
+            #how-it-works .hw-grid { grid-template-columns: 1fr !important; }
+            #how-it-works .hw-arrow { transform: rotate(90deg); }
+          }
+        `}</style>
+
+        {/* Bottom CTA */}
+        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+          <button id="how-talent-cta-btn" style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            padding: '0 28px', height: '48px', borderRadius: '999px',
+            background: 'linear-gradient(135deg, #E3A72F 0%, #C8851A 100%)',
+            color: '#000', fontWeight: 700, fontSize: '0.9rem', border: 'none', cursor: 'pointer',
+          }}>
+            Create Profile →
+          </button>
         </div>
       </div>
     </section>
