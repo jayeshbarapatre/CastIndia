@@ -11,6 +11,10 @@ import CastingLayout from './components/layouts/CastingLayout'
 import Home from './pages/Home'
 import Auth from './pages/Auth'
 
+// Shared Authenticated Pages
+import Account from './pages/Account'
+import Settings from './pages/Settings'
+
 // Talent Pages
 import CastingSearch from './pages/CastingSearch'
 import CastingDetails from './pages/CastingDetails'
@@ -42,6 +46,8 @@ export default function App() {
               <Route path="/talent/dashboard" element={<TalentDashboard />} />
               <Route path="/talent/applications" element={<TalentDashboard />} />
               <Route path="/talent/saved" element={<TalentDashboard />} />
+              <Route path="/talent/account" element={<Account />} />
+              <Route path="/talent/settings" element={<Settings />} />
               
               {/* Casting Discovery for Talent */}
               <Route path="/casting" element={<CastingSearch />} />
@@ -58,6 +64,8 @@ export default function App() {
               <Route path="/casting-team/projects/:id" element={<ProjectKanban />} />
               <Route path="/casting-team/shortlists" element={<CastingDashboard />} />
               <Route path="/casting-team/new" element={<CreateCasting />} />
+              <Route path="/casting-team/account" element={<Account />} />
+              <Route path="/casting-team/settings" element={<Settings />} />
               
               {/* Talent Discovery for Casting */}
               <Route path="/talent" element={<TalentSearch />} />

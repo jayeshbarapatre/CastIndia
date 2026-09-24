@@ -82,18 +82,18 @@ function CastingHeader() {
 
             {/* User Dropdown */}
             {showUserMenu && (
-              <div className="absolute top-full right-0 mt-4 w-48 bg-[var(--color-surface-1)] backdrop-blur-xl border border-[var(--color-border)] rounded-2xl shadow-xl overflow-hidden z-50 animate-fade-down">
-                <div className="p-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]">
+              <div className="absolute top-full right-0 mt-4 w-48 bg-[#0D0B14] border border-[var(--color-border)] rounded-2xl shadow-xl overflow-hidden z-50 animate-fade-down">
+                <div className="p-3 border-b border-[var(--color-border)] bg-[rgba(255,255,255,0.02)]">
                   <p className="body-sm font-bold text-[var(--color-text-primary)] truncate">{user?.user_metadata?.full_name || 'Casting User'}</p>
                   <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
                 </div>
                 <div className="p-2 flex flex-col gap-1">
-                  <button onClick={() => { setAlertOpen(true); setShowUserMenu(false); }} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors w-full text-left">
+                  <Link to="/casting-team/account" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors w-full text-left">
                     <User size={16} /> Account
-                  </button>
-                  <button onClick={() => { setAlertOpen(true); setShowUserMenu(false); }} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors w-full text-left">
+                  </Link>
+                  <Link to="/casting-team/settings" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] transition-colors w-full text-left">
                     <Settings size={16} /> Settings
-                  </button>
+                  </Link>
                   <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors w-full text-left">
                     <LogOut size={16} /> Sign out
                   </button>
