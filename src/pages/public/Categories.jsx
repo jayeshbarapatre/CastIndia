@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Grid, ArrowRight, Film, Mic2, Camera, Music, Tv2, Palette, Radio, Users } from 'lucide-react'
-import { InfoPageHero, InfoSection, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, SectionHeading } from '../InfoPage'
 
 const categories = [
   { icon: Film, label: 'Actors', count: '18,400+', color: 'var(--color-violet-light)', bg: 'rgba(139,92,246,0.15)', sub: 'Feature Film · Web Series · OTT' },

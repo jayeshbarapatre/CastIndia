@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Megaphone, ArrowRight, CheckCircle2, Users, Search, Zap } from 'lucide-react'
-import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from '../InfoPage'
 
 const benefits = [
   { icon: Users, title: 'Access 50,000+ Verified Talent', desc: 'Browse a massive database of actors, models, dancers, and voice artists — all verified and ready to work.', color: 'var(--color-violet-light)', bg: 'rgba(139,92,246,0.15)' },

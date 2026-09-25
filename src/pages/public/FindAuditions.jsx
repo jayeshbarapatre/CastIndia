@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, Filter, MapPin, Clock, ArrowRight, Briefcase, Star } from 'lucide-react'
-import { InfoPageHero, InfoSection, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, SectionHeading } from '../InfoPage'
 
 const auditions = [
   { id: 1, title: 'Lead Actor – Cyberpunk Mumbai', type: 'Feature Film', location: 'Mumbai', deadline: '3 days left', pay: '₹2–5L', tags: ['Hindi', 'Action', '18–35'], featured: true },

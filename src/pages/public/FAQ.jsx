@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HelpCircle, ArrowRight, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react'
-import { InfoPageHero, InfoSection, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, SectionHeading } from '../InfoPage'
 
 const faqData = [
   {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Info, ArrowRight, Target, Heart, Zap, Globe2, Award, Users } from 'lucide-react'
-import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from '../InfoPage'
 
 const values = [
   { icon: Heart, title: 'Talent First', desc: 'We built this platform for talent. Every feature, every decision is made to help performers get discovered and succeed.', color: '#F87171', bg: 'rgba(248,113,113,0.12)' },

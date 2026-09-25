@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { BookOpen, ArrowRight, FileText, Video, Download, Lightbulb, Award } from 'lucide-react'
-import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from '../InfoPage'
 
 const guides = [
   { icon: Video, title: 'How to Film Your Self-Tape', desc: 'A step-by-step guide to filming a professional-quality audition from your phone at home.', tag: 'Video Guide', color: 'var(--color-violet-light)', bg: 'rgba(139,92,246,0.15)' },

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { BookOpen, ArrowRight, BarChart2, Clipboard, Users, FileText } from 'lucide-react'
-import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from '../InfoPage'
 
 const resources = [
   { icon: FileText, title: 'How to Write a Casting Brief', desc: 'A complete template for writing a clear, professional casting brief that attracts the right talent.', tag: 'Template', color: 'var(--color-violet-light)', bg: 'rgba(139,92,246,0.15)' },

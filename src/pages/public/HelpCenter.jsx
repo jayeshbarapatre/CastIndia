@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { HelpCircle, ArrowRight, MessageCircle, BookOpen, Search, Zap } from 'lucide-react'
-import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from '../InfoPage'
 
 const quickLinks = [
   { icon: BookOpen, title: 'Getting Started', desc: 'New here? Learn how to set up your profile and start using CastIndia in minutes.', color: 'var(--color-violet-light)', bg: 'rgba(139,92,246,0.15)', link: '/how-it-works' },

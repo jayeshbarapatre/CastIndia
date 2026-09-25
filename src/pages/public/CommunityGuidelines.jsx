@@ -1,6 +1,6 @@
 import React from 'react'
 import { Users } from 'lucide-react'
-import { InfoPageHero, InfoSection } from './InfoPage'
+import { InfoPageHero, InfoSection } from '../InfoPage'
 
 const sections = [
   {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { UserPlus, Camera, Star, CheckCircle2, ArrowRight, Film, Mic2, Palette, Music } from 'lucide-react'
-import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from '../InfoPage'
 
 const steps = [
   { step: '01', title: 'Sign Up for Free', desc: 'Create your talent account in under 2 minutes. No credit card needed.' },

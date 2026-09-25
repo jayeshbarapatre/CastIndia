@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Shield, AlertTriangle, Lock, Eye, Phone, ArrowRight, CheckCircle2 } from 'lucide-react'
-import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, InfoCard, InfoGrid, SectionHeading } from '../InfoPage'
 
 const safetyRules = [
   { icon: Lock, title: 'Never Pay to Audition', color: '#F87171', bg: 'rgba(248,113,113,0.12)', desc: 'Legitimate casting calls never ask you to pay for an audition, callback, or to be listed. Any request for money is a red flag.' },

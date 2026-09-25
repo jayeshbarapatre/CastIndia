@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Mail, Phone, MapPin, MessageCircle, ArrowRight, CheckCircle2 } from 'lucide-react'
-import { InfoPageHero, InfoSection, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, SectionHeading } from '../InfoPage'
 
 const topics = ['General Enquiry', 'Report a Problem', 'Partnership', 'Press / Media', 'Technical Support', 'Safety Concern']
 

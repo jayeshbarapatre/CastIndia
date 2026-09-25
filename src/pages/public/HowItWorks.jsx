@@ -1,7 +1,7 @@
 import React from 'react'
 import { ArrowRight, Info, Users, Lightbulb, CheckCircle2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { InfoPageHero, InfoSection, SectionHeading } from './InfoPage'
+import { InfoPageHero, InfoSection, SectionHeading } from '../InfoPage'
 
 const talentSteps = [
   { step: '01', title: 'Create Your Free Profile', desc: 'Sign up as talent. Add your photos, demo reel, skills, languages, and experience. It\'s 100% free.' },
